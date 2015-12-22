@@ -1,6 +1,7 @@
 <?php
+namespace panoply;
 
-class Panoply {
+class SDK {
 
     public static $PKGNAME = "panoply-python-sdk";
     public static $VERSION = "1.0.0";
@@ -26,16 +27,18 @@ class Panoply {
             $region,
             $awsaccount,
             $account,
-            $rand );
+            $rand 
+        );
 
         $this->buffer = "";
-    },
+    }
 
     function write( $table, $data ) {
         $data[ "__table" ] = $table;
         $data = json_encode( $data );
         $data = urlencode( $data );
         $this->buffer .= $data . "\n";
+        return $this;
     }
 
     function send () {
@@ -56,18 +59,15 @@ class Panoply {
             "MessageAttribute.3.Value.StringValue=" . $this->PKGNAME . "-" . $this->VERSION,
         );
 
-        $body = join( "&", $body );
-
-        $headers = array(
+        $req = new \http\Client\Request( $this->qurl, "POST" );
+        $req->setRawPostData( join( "&", $body ) );
+        $req->setHeaders( array(
             "Content-Length" => strlen( $body ),
             "Content-Type" => "application/x-www-form-urlencoded"
-        )
+        ));
 
-        $options = array(
-            "headers" => $headers
-        )
-
-        http_post_data( $this->qurl, $body, $options );
+        $req->send();
+        return $this;
     }
 
 
