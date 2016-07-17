@@ -74,6 +74,7 @@ class SDK {
             "Content-Type" => "application/x-www-form-urlencoded"
         ));
         curl_exec( $ch );
+        curl_close( $ch );
         
         return $this;
     }
