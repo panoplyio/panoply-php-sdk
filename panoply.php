@@ -38,10 +38,15 @@ class SDK {
         $data = json_encode( $data );
         $data = urlencode( $data );
         $this->buffer .= $data . "\n";
+
+        if ( strlen( $this->buffer ) > 60000 ) {
+            $this->flush();
+        }
+
         return $this;
     }
 
-    function send () {
+    function flush () {
         $body = $this->buffer;
         $this->buffer = "";
 
@@ -56,17 +61,20 @@ class SDK {
             "MessageAttribute.2.Value.StringValue=" . $this->apisecret,
             "MessageAttribute.3.Name=sdk",
             "MessageAttribute.3.Value.DataType=String",
-            "MessageAttribute.3.Value.StringValue=" . $this->PKGNAME . "-" . $this->VERSION,
+            "MessageAttribute.3.Value.StringValue=" . SDK::$PKGNAME . "-" . SDK::$VERSION,
         );
 
-        $req = new \http\Client\Request( $this->qurl, "POST" );
-        $req->setRawPostData( join( "&", $body ) );
-        $req->setHeaders( array(
+        $body = join( "&", $body );
+
+        $ch = curl_init( $this->qurl );
+        curl_setopt( $ch, CURLOPT_POST, true );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $body );
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
             "Content-Length" => strlen( $body ),
             "Content-Type" => "application/x-www-form-urlencoded"
         ));
-
-        $req->send();
+        curl_exec( $ch );
+        
         return $this;
     }
 
