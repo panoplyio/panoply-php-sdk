@@ -20,7 +20,7 @@ $sdk->flush()
 
 #### API
 
-This SDK is used to send arbitrary, semi-structured associative arrays to the Panoply.io database in near real time. There's no schema to maintain - what you send is what will be saved to your data warehouse. Internally, the SDK maintains a small buffer (60KB) of data in memory before flushing it out to the network. If you want to manually flush it out (for example, during a server restart or testing - you'll need to call `flush` manually) - otherwise, the `write` functions will take care of everything.
+This SDK is used to send arbitrary, semi-structured associative arrays to the Panoply.io database in near real time. There's no schema to maintain - what you send is what will be saved to your data warehouse. Internally, the SDK maintains a small buffer (60KB) of data in memory before flushing it out to the network. If you want to manually flush it out (for example, during a server restart or testing) you'll need to call `flush` manually. Otherwise, the `write` functions will take care of everything.
 
 ###### new SDK( apikey, apisecret )
 
